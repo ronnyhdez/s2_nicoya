@@ -1,0 +1,97 @@
+---
+title: Notes on working with S2 data
+author: Ronny A. Hernandez Mora
+format: html
+---
+
+```{python}
+import rasterio
+import numpy as np
+from rasterio import plot
+from matplotlib import pyplot as plt
+```
+
+Download images from: [](https://browser.dataspace.copernicus.eu/)
+
+When you visit that link, you can see something like:
+
+![](img/copernicus_1)
+
+Select the image by zooming into the area of interest. You can set a group of
+filter parameters from the `parameters` tab that will help you to select the
+image.
+
+![](img/copernicus_2)
+
+To download the images you will need to have an account. If you just want
+to explore around it's not necessary to have the account.
+
+Once the search process is done, you will have a set of options to choose from.
+For this example we just one to work with one image and not several of them 
+(which can imply merging them in a separated process)
+
+Your search process can look something like:
+
+![](img/copernicus_3)
+
+In my case, I wanted a clear image with atmospheric correction, so I proceed to
+download the `L2A` product. 
+
+![](img/copernicus_4)
+
+You can see the names are quite long. This has a reason, which is to provide
+some information about the product we are about to decide to use.
+
+For example, the file name pattern `S2A_MSIL2A_20240303T160141_N0510_R097_T16PFS`
+contains:
+
+  - S2A: Sentinel-2A satellite (one of two satellites in the constellation)
+  - MSIL2A/MSIL1C: Processing level
+  - L2A: Bottom-of-atmosphere reflectance (atmospherically corrected)
+  - L1C: Top-of-atmosphere reflectance (not atmospherically corrected)
+  - 20240303T160141: Acquisition date and time (March 3, 2024, 16:01:41 UTC)
+  - R097: Relative orbit number
+  - T16PFS: Tile identifier
+
+Why do we have some size differences? 
+
+L2A: 1054MB
+L1C: 753MB and 690MB
+The L2A product is larger because it contains additional atmospheric correction data.
+
+
+## Reading the product
+
+So, now we have the file locally. It is unzipped and in a folder in our
+repository
+
+The product will contain many files
+
+![](img/content)
+
+The images will be contained in the `GRANULE`. Inside this one we will find
+another set of folders which will separate the files by resolution:
+
+  - R10m: 10 meter resolution (highest)
+  - R20m: 20 meter resolution
+  - R60m: 60 meter resolution (lowest)
+
+Inside each of those, there are going to be other files ...
+... Key bands and their common uses:
+
+  - B02 (Blue), B03 (Green), B04 (Red): Natural color imagery
+  - B08: Near Infrared (NIR) - vegetation studies
+  - B8A: Narrow NIR
+  - B11, B12: Short-wave Infrared (SWIR) - geology, soil moisture
+  - TCI: True Color Image (natural color composite)
+  - AOT: Aerosol Optical Thickness
+  - WVP: Water Vapor
+  - SCL: Scene Classification Layer
+
+```{python}
+
+```
+
+
+
+

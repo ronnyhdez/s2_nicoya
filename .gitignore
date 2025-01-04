@@ -169,3 +169,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+S2A_MSIL2A_20240303T160141_N0510_R097_T16PFS_20240303T212049.SAFE/
+data/
+img/
