@@ -1,5 +1,5 @@
 ---
-title: Notes on working with S2 data
+title: Getting Started with Sentinel-2 Downloading, Processing, and Analyzing Satellite Imagery Using Python 
 author: Ronny A. Hernandez Mora
 execute:
   message: false
@@ -24,16 +24,16 @@ editor_options:
   chunk_output_type: 
 ---
 
-```{python}
-import rasterio
-import numpy as np
-from rasterio import plot
-import matplotlib.pyplot as plt
-```
+## Getting the data
 
-Download images from: [](https://browser.dataspace.copernicus.eu/)
+There are several solutions to obtain the satellite images. In this case, we
+just want to obtain one image to explore the necessary steps to understan the
+files, meta data, transform the pixels and visualize the image.
 
-When you visit that link, you can see something like:
+To download any satellite image from the Copernicus Sentinel Missions we can 
+use [Copernicus Data Space](https://browser.dataspace.copernicus.eu/)
+
+When you visit that link, you can see something similar to (as January 2025):
 
 ![](img/copernicus_1)
 
@@ -116,6 +116,14 @@ can proceed to read some files and check them out. As a first step, I just
 want to process 3 bands (Red, Green, Blue) to obtain a natural composite
 image. Later I will use other bands to calculate some vegetation indices and
 explore how the looked like on March 3rd, 2024 (Satellite image date)
+
+
+```{python}
+import rasterio
+import numpy as np
+from rasterio import plot
+import matplotlib.pyplot as plt
+```
 
 Given that the path is so long, I'm going to create some objects with the
 relative path, so later I would use just the object name, and save a lot of
