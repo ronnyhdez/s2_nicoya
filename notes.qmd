@@ -146,6 +146,7 @@ reasonable.
 red_band = rasterio.open(red)
 green_band = rasterio.open(green)
 blue_band = rasterio.open(blue)
+nir_band = rasterio.open(nir)
 ```
 
 Now that we read the necessary bands with a reference to each of the objects,
@@ -192,6 +193,7 @@ if the image is so big that we ran out of memory. Be aware!
 red = red_band.read(1).astype('float32')
 green = green_band.read(1).astype('float32')
 blue = blue_band.read(1).astype('float32')
+nir = nir_band.read(1).astype('float32')
 ```
 
 So far, so good. 
@@ -266,4 +268,90 @@ green_band.close()
 blue_band.close()
 ```
 
+## Vegetation indices
+
+So far we have the RGB bands and the visualization for humans. But, we can
+do much more and take advantage of the rest of bands we have within the data
+product we downloaded. Remember we had several folders with files at
+different resolutions? Well, there are more than RGB bands in there. 
+
+We created the visualization above using the RBG bands at a resolution of 10m, 
+but there is one more band in there: Near Infrared or NIR. 
+
+To remember there are:
+
+| Band | Name | 
+| ---- | ---- |
+| B02  | Blue |
+| B03  | Green |
+| B04  | Red  |
+| B08  | NIR  |
+
+```{python}
+def calculate_index(band1, band2, name, formula):
+    """
+    Calculate vegetation index and create visualization
+    band1, band2: input bands
+    name: name of the index (for title)
+    formula: description of formula for title
+    """
+    index = (band1 - band2) / (band1 + band2)
+    
+    plt.figure(figsize=(12, 8))
+    plt.imshow(index, cmap='viridis')  
+    plt.colorbar(label=name)
+    plt.title(f'{name}\n{formula}')
+    plt.axis('off')
+    plt.show()
+    
+    return index
+
+# Calculate NDVI (NIR - Red) / (NIR + Red)
+ndvi = calculate_index(nir, red, 
+                      'Normalized Difference Vegetation Index (NDVI)',
+                      'NDVI = (NIR - Red) / (NIR + Red)')
+
+# For GNDVI (Green NDVI) using green band instead of red
+gndvi = calculate_index(nir, green,
+                       'Green Normalized Difference Vegetation Index (GNDVI)',
+                       'GNDVI = (NIR - Green) / (NIR + Green)')
+
+# For NDWI (Normalized Difference Water Index) using green and NIR
+ndwi = calculate_index(green, nir,
+                      'Normalized Difference Water Index (NDWI)',
+                      'NDWI = (Green - NIR) / (Green + NIR)')
+
+# Let's also create a subplot comparing all indices
+plt.figure(figsize=(20, 6))
+
+plt.subplot(131)
+plt.imshow(ndvi, cmap='cividis')
+plt.title('NDVI')
+plt.colorbar(label='NDVI')
+plt.axis('off')
+
+plt.subplot(132)
+plt.imshow(gndvi, cmap='cividis')
+plt.title('GNDVI')
+plt.colorbar(label='GNDVI')
+plt.axis('off')
+
+plt.subplot(133)
+plt.imshow(ndwi, cmap='cividis')  
+plt.title('NDWI')
+plt.colorbar(label='NDWI')
+plt.axis('off')
+
+plt.suptitle('Comparison of Vegetation and Water Indices', fontsize=16)
+plt.tight_layout()
+plt.show()
+
+# Print some basic statistics for each index
+for name, index in [('NDVI', ndvi), ('GNDVI', gndvi), ('NDWI', ndwi)]:
+    print(f"\n{name} statistics:")
+    print(f"Min: {index.min():.3f}")
+    print(f"Max: {index.max():.3f}")
+    print(f"Mean: {index.mean():.3f}")
+    print(f"Standard deviation: {index.std():.3f}")
+```
 
